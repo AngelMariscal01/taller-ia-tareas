@@ -141,7 +141,7 @@ git config --global user.email "tu-correo@ejemplo.com"
 | `postinstall script was not run` o `install scripts blocked` | npm bloqueó el script de instalación. | Reinstala con `npm install -g --allow-scripts=@opencode/cli @opencode/cli`. |
 | El comando falla con un error raro de nombre | Copiaste el comando con un carácter extraño. | Copia desde el bloque de código de esta guía, no desde un chat o PDF. |
 | `pacman` se queda en `Retrieving packages` | Descarga lenta o espejo atorado. | `Ctrl+C` y usa `curl -fsSL https://opencode.ai/install \| bash`. |
-| `python3` no existe en Windows sin WSL | Windows usa `python` o `py`. | Usa `py -m venv .venv` y `python -m pytest`. |
+| `python3` no existe en Windows sin WSL | Windows usa `python` o `py`. | Usa `py -m venv .venv` y `.venv\Scripts\python -m pytest -q`. |
 
 ## 1.5 Plan B: sin instalar nada (GitHub Codespaces)
 
@@ -154,8 +154,8 @@ que se abre en tu navegador. Las cuentas personales tienen horas gratis al mes, 
 4. Espera a que termine de preparar Python, pytest y OpenCode (la primera vez tarda unos minutos).
 5. Abre una **terminal nueva** y escribe `opencode`.
 
-Con Codespaces ya tienes todo instalado: **salta la Parte 2** y ve a la Parte 3. Solo comprueba con
-`python -m pytest -q` (debe fallar, ver 2.3).
+En Codespaces el proyecto ya está descargado: **salta el 2.1** y haz solo el **2.2** (un comando) y el
+**2.4** (comprobar que las pruebas fallan).
 
 Si dice `opencode: command not found`, la terminal se abrió antes de terminar la instalación: abre una
 nueva o ejecuta `curl -fsSL https://opencode.ai/install | bash`.
@@ -265,16 +265,18 @@ Qué trae el proyecto:
 Un **entorno virtual** (`.venv`) es una carpeta donde instalas las librerías de este proyecto sin tocar las de
 tu sistema. Es necesario: muchos sistemas modernos (Ubuntu, Arch) no dejan instalar con `pip` fuera de uno.
 
+Un solo comando crea el entorno e instala las librerías:
+
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate        # Windows sin WSL: .venv\Scripts\activate
-pip install -r requirements.txt
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 ```
 
-Sabrás que el entorno está activo porque tu terminal muestra `(.venv)` al inicio. **Cada vez que abras una
-terminal nueva** en el proyecto, vuelve a ejecutar `source .venv/bin/activate`.
+**No necesitas "activar" el entorno.** En toda la guía ejecutamos las pruebas con la ruta completa,
+`.venv/bin/python -m pytest -q`: así funciona igual en `bash`, `zsh` y `fish`, en una terminal nueva, y también
+dentro de OpenCode con `!` (por ejemplo, escribe `!.venv/bin/python -m pytest -q`).
 
-Windows sin WSL: usa `py -m venv .venv` en lugar de `python3 -m venv .venv`.
+Windows sin WSL: usa `py -m venv .venv && .venv\Scripts\pip install -r requirements.txt` y, para las
+pruebas, `.venv\Scripts\python -m pytest -q`.
 
 ## 2.3 Entorno y librerías — con ayuda de OpenCode
 
@@ -287,20 +289,16 @@ opencode
 Cambia a **Build** con `Tab` y pega:
 
 ```text
-Prepara el entorno de este proyecto: crea un entorno virtual en .venv, instala las dependencias de requirements.txt y ejecuta python -m pytest -q. Antes de cada comando, dime en una línea qué hace. No instales nada que no esté en requirements.txt, no uses sudo y no modifiques ningún archivo de tests/.
+Prepara el entorno de este proyecto: crea un entorno virtual en .venv, instala las dependencias de requirements.txt y ejecuta .venv/bin/python -m pytest -q. Antes de cada comando, dime en una línea qué hace. No instales nada que no esté en requirements.txt, no uses sudo y no modifiques ningún archivo de tests/.
 ```
 
-Revisa lo que hace antes de aprobar cada comando. Dos detalles importantes:
-
-- El agente trabaja en su propia terminal. **Tú también debes activar el entorno** en la tuya
-  (`source .venv/bin/activate`) para ejecutar pruebas por tu cuenta.
-- Si el agente propone instalar algo que no pediste, o usar `sudo`, no lo aceptes. `AGENTS.md` le dice que
-  pregunte antes de instalar dependencias.
+Revisa lo que hace antes de aprobar cada comando. Si el agente propone instalar algo que no pediste, o usar
+`sudo`, no lo aceptes. `AGENTS.md` le dice que pregunte antes de instalar dependencias.
 
 ## 2.4 Comprueba: las pruebas deben fallar
 
 ```bash
-python -m pytest -q
+.venv/bin/python -m pytest -q
 ```
 
 Debes ver un error como `ModuleNotFoundError: No module named 'tareas.gestor'`. **Es correcto:** el código
@@ -309,8 +307,8 @@ todavía no existe. Así empieza TDD: con la prueba en rojo.
 ### Checklist de la Parte 2
 
 - [ ] Estoy dentro de la carpeta `tareas-ia` y veo `AGENTS.md` con `ls`.
-- [ ] Mi terminal muestra `(.venv)`.
-- [ ] `python -m pytest -q` falla con `ModuleNotFoundError` (en rojo, como debe ser).
+- [ ] Existe la carpeta `.venv` (`ls -a` la muestra).
+- [ ] `.venv/bin/python -m pytest -q` falla con `ModuleNotFoundError` (en rojo, como debe ser).
 - [ ] Abrí `opencode` dentro de esta carpeta y tengo un modelo conectado.
 
 ---
@@ -393,15 +391,15 @@ Elige tu ruta. Las dos siguen el mismo ciclo por cada requisito:
 
 1. **Rojo.** Las pruebas ya están en `tests/test_agregar.py`. Comprueba que fallen:
    ```bash
-   python -m pytest -q
+   .venv/bin/python -m pytest -q
    ```
 2. **Verde.** Cambia a **Build** con `Tab` y pega:
    ```text
-   Implementa lo mínimo en tareas/gestor.py para que pasen las pruebas de tests/test_agregar.py. Sigue AGENTS.md y el requisito 1 de specs/spec.md. No modifiques nada en tests/. Ejecuta python -m pytest -q y muéstrame la salida real.
+   Implementa lo mínimo en tareas/gestor.py para que pasen las pruebas de tests/test_agregar.py. Sigue AGENTS.md y el requisito 1 de specs/spec.md. No modifiques nada en tests/. Ejecuta .venv/bin/python -m pytest -q y muéstrame la salida real.
    ```
 3. **Revisa.** Corre tú las pruebas y mira los cambios:
    ```bash
-   python -m pytest -q
+   .venv/bin/python -m pytest -q
    git diff
    ```
    Elige dos líneas que no entiendas, cambia a **Plan** y pregunta:
@@ -419,14 +417,14 @@ Elige tu ruta. Las dos siguen el mismo ciclo por cada requisito:
 1. **Rojo.** Copia las pruebas que vienen listas y comprueba que fallen:
    ```bash
    cp ruta-basica/test_listar.py tests/
-   python -m pytest -q
+   .venv/bin/python -m pytest -q
    ```
    (Windows sin WSL: `copy ruta-basica\test_listar.py tests\`.)
 2. **Verde.** En **Build**:
    ```text
-   Implementa lo mínimo en tareas/gestor.py para que pasen las pruebas de tests/test_listar.py (requisito 2 de specs/spec.md) sin romper las de tests/test_agregar.py. No modifiques nada en tests/. Ejecuta python -m pytest -q y muéstrame la salida real.
+   Implementa lo mínimo en tareas/gestor.py para que pasen las pruebas de tests/test_listar.py (requisito 2 de specs/spec.md) sin romper las de tests/test_agregar.py. No modifiques nada en tests/. Ejecuta .venv/bin/python -m pytest -q y muéstrame la salida real.
    ```
-3. **Revisa:** `python -m pytest -q` y `git diff`. Pregunta en **Plan** por dos líneas que no entiendas.
+3. **Revisa:** `.venv/bin/python -m pytest -q` y `git diff`. Pregunta en **Plan** por dos líneas que no entiendas.
 4. **Guarda.** Marca la tarea 2 con `[x]` en `specs/tasks.md` y haz commit:
    ```bash
    git add -A && git commit -m "Requisito 2: listar"
@@ -437,14 +435,14 @@ Elige tu ruta. Las dos siguen el mismo ciclo por cada requisito:
 1. **Rojo.** Copia las pruebas y comprueba que fallen:
    ```bash
    cp ruta-basica/test_completar.py tests/
-   python -m pytest -q
+   .venv/bin/python -m pytest -q
    ```
    (Windows sin WSL: `copy ruta-basica\test_completar.py tests\`.)
 2. **Verde.** En **Build**:
    ```text
-   Implementa lo mínimo en tareas/gestor.py para que pasen las pruebas de tests/test_completar.py (requisito 3 de specs/spec.md) sin romper las pruebas anteriores. TareaNoEncontrada debe definirse en tareas/gestor.py. No modifiques nada en tests/. Ejecuta python -m pytest -q y muéstrame la salida real.
+   Implementa lo mínimo en tareas/gestor.py para que pasen las pruebas de tests/test_completar.py (requisito 3 de specs/spec.md) sin romper las pruebas anteriores. TareaNoEncontrada debe definirse en tareas/gestor.py. No modifiques nada en tests/. Ejecuta .venv/bin/python -m pytest -q y muéstrame la salida real.
    ```
-3. **Revisa:** `python -m pytest -q` y `git diff`.
+3. **Revisa:** `.venv/bin/python -m pytest -q` y `git diff`.
 4. **Guarda.** Marca la tarea 3 con `[x]` y haz commit:
    ```bash
    git add -A && git commit -m "Requisito 3: completar"
@@ -495,22 +493,22 @@ requisito 1 de la ruta básica.
 
    **Léelas y ajústalas**, comprueba que fallen y haz commit en rojo:
    ```bash
-   python -m pytest -q
+   .venv/bin/python -m pytest -q
    git add -A && git commit -m "Pruebas en rojo: listar"
    ```
 2. **Verde.** En **Build** (sustituye el requisito y el archivo):
    ```text
-   Implementa lo mínimo en tareas/gestor.py para que pasen las pruebas de tests/test_listar.py (requisito 2 de specs/spec.md) sin romper las pruebas anteriores. No modifiques nada en tests/. Ejecuta python -m pytest -q y muéstrame la salida real.
+   Implementa lo mínimo en tareas/gestor.py para que pasen las pruebas de tests/test_listar.py (requisito 2 de specs/spec.md) sin romper las pruebas anteriores. No modifiques nada en tests/. Ejecuta .venv/bin/python -m pytest -q y muéstrame la salida real.
    ```
 3. **Revisa** con estos comandos:
    ```bash
    git diff                                  # ¿entiendes cada línea?
    git diff --stat HEAD -- tests/            # debe salir vacío: el agente no tocó las pruebas
-   python -m pytest -q                       # comprueba tú mismo que están en verde
+   .venv/bin/python -m pytest -q                       # comprueba tú mismo que están en verde
    ```
 4. **Refactor.** Pide mejoras de legibilidad, revisa el diff y haz commit:
    ```text
-   Mejora nombres y elimina duplicación en tareas/gestor.py sin cambiar el comportamiento. No modifiques tests/. Las pruebas deben seguir en verde: ejecuta python -m pytest -q y muéstrame la salida real.
+   Mejora nombres y elimina duplicación en tareas/gestor.py sin cambiar el comportamiento. No modifiques tests/. Las pruebas deben seguir en verde: ejecuta .venv/bin/python -m pytest -q y muéstrame la salida real.
    ```
    ```bash
    git add -A && git commit -m "Requisito 2: listar"
@@ -542,7 +540,7 @@ Marca cada tarea con `[x]` en `specs/tasks.md` al terminar.
 
 Verifica cada punto tú mismo:
 
-- [ ] `python -m pytest -q` en verde, **ejecutado por ti**.
+- [ ] `.venv/bin/python -m pytest -q` en verde, **ejecutado por ti**.
 - [ ] `git diff --stat` revisado; ningún cambio que no entiendas.
 - [ ] `specs/tasks.md` con tus tareas marcadas.
 - [ ] `git log --oneline` muestra commits pequeños (ruta completa: incluido uno con pruebas en rojo).
@@ -573,9 +571,10 @@ botón **Use this template** para crear tu propia copia.
 | "upstream request failed" o el modelo desapareció | El modelo gratuito se retiró o está saturado | Elige otro con `/models` |
 | El agente dice que editó pero no cambió nada | Estás en **Plan**, o el modelo maneja mal las herramientas | `Tab` a **Build**; si sigue, cambia de modelo |
 | El agente modificó las pruebas | Ignoró la regla de `AGENTS.md` | `git restore tests/` y recuérdale la regla |
-| `ModuleNotFoundError: tareas` | Ejecutas pytest fuera de la raíz o falta `tareas/__init__.py` | Usa `python -m pytest` desde la carpeta del proyecto |
-| `ModuleNotFoundError: pytest` o `No module named pytest` | El entorno virtual no está activo | `source .venv/bin/activate` y vuelve a intentar |
-| `externally-managed-environment` al usar `pip` | Intentas instalar fuera del entorno virtual | Activa `.venv` (ver 2.2) |
+| `ModuleNotFoundError: tareas` | Ejecutas pytest fuera de la raíz o falta `tareas/__init__.py` | Usa `.venv/bin/python -m pytest -q` desde la carpeta del proyecto |
+| `No module named pytest` | Ejecutaste `python -m pytest` (el Python del sistema, sin las librerías) | Usa la ruta completa: `.venv/bin/python -m pytest -q` |
+| `.venv/bin/python: No such file or directory` | Aún no creaste el entorno, o estás en otra carpeta | Entra a la carpeta del proyecto y ejecuta `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt` |
+| `externally-managed-environment` al usar `pip` | Intentas instalar fuera del entorno virtual | Instala con `.venv/bin/pip install -r requirements.txt` (ver 2.2) |
 | Respuestas raras tras mucho rato | Contexto saturado | `/new` y pide que lea `AGENTS.md` y `specs/tasks.md` |
 
 # Fuentes (consultadas en noviembre de 2026)
