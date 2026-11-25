@@ -30,4 +30,4 @@ opencode
 **Code → Codespaces → Create codespace on main**. Espera a que termine de preparar el entorno,
 abre una terminal nueva y escribe `opencode`.
 
-La guía completa de la práctica te la comparte el instructor.
+La guía completa del workshop (instalación, preparación del proyecto y práctica con prompts para copiar y pegar) está en [GUIA.md](GUIA.md).
