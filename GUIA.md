@@ -448,53 +448,57 @@ Elige tu ruta. Las dos siguen el mismo ciclo por cada requisito:
    git add -A && git commit -m "Requisito 3: completar"
    ```
 
-#### Prueba manual 1 — ¡usa tu programa!
+#### Requisito 6 — una interfaz de texto para usar tu programa
 
-Las pruebas dicen "verde", pero ¿cómo se comporta lo que construiste cuando **tú** lo usas? Vas a probarlo a
-mano en el intérprete de Python. Abre Python **dentro de la carpeta del proyecto**:
+Tus pruebas dicen "verde", pero un módulo no se puede *usar*. Vas a pedirle al agente una **interfaz de texto**:
+un menú en la terminal para agregar, ver y completar tareas, y así comprobar a mano cómo funciona lo que
+construiste. La llamamos requisito 6 porque en `specs/spec.md` los números 4 y 5 son eliminar y guardar.
+
+Como el método dice que **lo que no está en la especificación no se construye**, primero se escribe en la
+especificación y después se pide el código.
+
+1. **Especificación.** Cambia a **Build** con `Tab` y pega:
+   ```text
+   Agrega a specs/spec.md un requisito 6 y a specs/tasks.md la tarea 6, sin tocar nada más. Requisito 6, interfaz de texto: al ejecutar python -m tareas (archivo tareas/__main__.py) se muestra un menú que se repite hasta que la persona elija salir, con estas opciones: 1) agregar una tarea (pide el título y la prioridad; si la prioridad se deja vacía usa "media"), 2) ver las tareas (muestra id, título, prioridad y si está completada, en el orden de listar), 3) completar una tarea (pide el id), 0) salir. Si la persona escribe una opción inválida, un dato inválido o un id que no existe, muestra un mensaje claro en español y vuelve al menú, sin cerrar el programa ni mostrar un traceback. Usa solo la biblioteca estándar (input y print) y la clase GestorTareas, sin cambiar su comportamiento.
+   ```
+   Lee lo que escribió en `specs/spec.md`: ¿agregó algo que no pediste?
+2. **Código.** En **Build**:
+   ```text
+   Implementa el requisito 6 de specs/spec.md en tareas/__main__.py. Usa solo GestorTareas: no cambies tareas/gestor.py ni nada en tests/. No ejecutes el programa tú (espera datos del teclado y se quedaría esperando): explícame cómo ejecutarlo y qué probar. Al terminar, ejecuta .venv/bin/python -m pytest -q y muéstrame la salida real para confirmar que todo sigue en verde.
+   ```
+3. **Revisa:** `git diff` y `.venv/bin/python -m pytest -q`. Esta capa es delgada (solo usa el gestor, cuya
+   lógica ya está probada), así que la comprobamos a mano.
+4. **Guarda.** Marca la tarea 6 con `[x]` y haz commit:
+   ```bash
+   git add -A && git commit -m "Requisito 6: interfaz de texto"
+   ```
+
+##### Prueba manual 1 — ¡usa tu programa!
+
+Ejecútalo **en tu terminal** (no con `!` dentro de OpenCode, porque el menú necesita que escribas):
 
 ```bash
-.venv/bin/python
+.venv/bin/python -m tareas
 ```
 
-(Windows sin WSL: `.venv\Scripts\python`.) Verás el símbolo `>>>`. Pega estas líneas (una por una, o todo
-el bloque):
+(Windows sin WSL: `.venv\Scripts\python -m tareas`.) Tu menú puede verse distinto al de tu compañero: lo
+importante es que **haga esto**.
 
-```python
-from tareas.gestor import GestorTareas, TareaNoEncontrada
-gestor = GestorTareas()
-gestor.agregar("Entregar la práctica", prioridad="alta")
-gestor.agregar("Lavar los trastes", prioridad="baja")
-gestor.agregar("Estudiar para el examen")
-gestor.completar(1)
-[(t.id, t.titulo, t.prioridad, t.completada) for t in gestor.listar()]
-[t.titulo for t in gestor.listar(estado="pendientes")]
-[t.titulo for t in gestor.listar(estado="completadas")]
-[t.titulo for t in gestor.listar(prioridad="baja")]
-gestor.agregar("   ")
-gestor.agregar("Algo", prioridad="urgente")
-gestor.completar(99)
-exit()
-```
-
-Al agregar tareas, Python muestra algo como `Tarea(id=1, ...)`: es la tarea que devolviste (el texto exacto
-depende de tu código). Qué debes ver en el resto:
-
-| Línea | Resultado esperado |
+| Haz esto en el menú | Debes ver |
 |---|---|
-| `[(t.id, ...) for t in gestor.listar()]` | `[(1, 'Entregar la práctica', 'alta', True), (3, 'Estudiar para el examen', 'media', False), (2, 'Lavar los trastes', 'baja', False)]`. Orden: alta, media, baja. |
-| `listar(estado="pendientes")` | `['Estudiar para el examen', 'Lavar los trastes']` |
-| `listar(estado="completadas")` | `['Entregar la práctica']` |
-| `listar(prioridad="baja")` | `['Lavar los trastes']` |
-| `gestor.agregar("   ")` | Un error que termina en `ValueError` (título vacío). |
-| `prioridad="urgente"` | Un error que termina en `ValueError` (prioridad inválida). |
-| `gestor.completar(99)` | Un error que termina en `TareaNoEncontrada`. |
+| Agrega `Entregar la práctica`, prioridad `alta` | Un mensaje de que se agregó |
+| Agrega `Lavar los trastes`, prioridad `baja` | Un mensaje de que se agregó |
+| Agrega `Estudiar para el examen` y deja la prioridad vacía (Enter) | Se agrega con prioridad `media` |
+| Completa la tarea con id `1` | Un mensaje de que se completó |
+| Ve las tareas | Orden: **alta** (`Entregar la práctica`, marcada como completada), **media** (`Estudiar...`), **baja** (`Lavar...`) |
+| Agrega una tarea con el título vacío | Un mensaje de error; el programa **sigue abierto** |
+| Agrega `Algo` con prioridad `urgente` | Un mensaje de error; el programa sigue abierto |
+| Completa la tarea con id `99` | Un mensaje de que no existe; el programa sigue abierto |
+| Escribe `hola` en el menú | Un mensaje de opción inválida; el programa sigue abierto |
+| Elige `0` | El programa termina |
 
-Los errores se ven largos (se llaman *traceback*). Lo que importa es **la última línea**. No pasa nada: Python
-sigue abierto y puedes seguir escribiendo.
-
-Si algo no coincide con lo esperado, **encontraste un error que las pruebas no atraparon**. Anótalo en
-`REFLEXION.md`.
+Si algo no coincide, **encontraste un error que las pruebas no atraparon** (o una regla de la especificación que
+el agente no cumplió). Anótalo en `REFLEXION.md`.
 
 ¿Terminaste antes de tiempo? Sigue con los requisitos 4 y 5 de la ruta completa (abajo): ahí escribes tú las
 pruebas.
@@ -562,8 +566,8 @@ requisito 1 de la ruta básica.
    git add -A && git commit -m "Requisito 2: listar"
    ```
 
-Marca cada tarea con `[x]` en `specs/tasks.md` al terminar. Cuando termines el requisito 3, haz la
-**Prueba manual 1** (en la ruta básica, arriba) para ver funcionar tu programa.
+Marca cada tarea con `[x]` en `specs/tasks.md` al terminar. Cuando termines el requisito 5, sigue con el
+**requisito 6 (interfaz de texto)** y la **Prueba manual 2**, más abajo.
 
 **Pistas para tus pruebas:**
 
@@ -585,81 +589,77 @@ Marca cada tarea con `[x]` en `specs/tasks.md` al terminar. Cuando termines el r
       assert [t.titulo for t in copia.listar()] == ["Leer el capítulo 3"]
   ```
 
-#### Prueba manual 2 — guarda, cierra y vuelve a abrir
+#### Requisito 6 — una interfaz de texto para usar tu programa
 
-Ya tienes los 5 requisitos. Ahora comprueba lo más importante de guardar: que las tareas **sobreviven** aunque
-cierres el programa. Haz esto en **dos sesiones de Python**.
+Con los 5 requisitos hechos, vas a pedirle al agente una **interfaz de texto**: un menú en la terminal que usa
+tu gestor, para comprobar a mano que todo funciona, incluido guardar y recuperar. Primero se escribe en la
+especificación (lo que no está ahí no se construye) y después el código.
 
-**Sesión A.** Abre Python en la carpeta del proyecto:
+1. **Especificación.** En **Build**:
+   ```text
+   Agrega a specs/spec.md un requisito 6 y a specs/tasks.md la tarea 6, sin tocar nada más. Requisito 6, interfaz de texto: al ejecutar python -m tareas (archivo tareas/__main__.py) se muestra un menú que se repite hasta que la persona elija salir, con estas opciones: 1) agregar una tarea (pide el título y la prioridad; si la prioridad se deja vacía usa "media"), 2) ver las tareas (muestra id, título, prioridad y si está completada, en el orden de listar), 3) completar una tarea (pide el id), 4) eliminar una tarea (pide el id), 5) guardar en el archivo tareas.json, 0) salir (antes de salir pregunta si desea guardar). Al iniciar, si existe tareas.json en la carpeta actual, lo carga con GestorTareas.cargar. Si la persona escribe una opción inválida, un dato inválido o un id que no existe, muestra un mensaje claro en español y vuelve al menú, sin cerrar el programa ni mostrar un traceback. Usa solo la biblioteca estándar (input y print) y la clase GestorTareas, sin cambiar su comportamiento.
+   ```
+   Lee lo que escribió en `specs/spec.md`: ¿agregó algo que no pediste?
+2. **Código.** En **Build**:
+   ```text
+   Implementa el requisito 6 de specs/spec.md en tareas/__main__.py. Usa solo GestorTareas: no cambies tareas/gestor.py ni nada en tests/. No ejecutes el programa tú (espera datos del teclado y se quedaría esperando): explícame cómo ejecutarlo y qué probar. Al terminar, ejecuta .venv/bin/python -m pytest -q y muéstrame la salida real para confirmar que todo sigue en verde.
+   ```
+3. **Revisa:** `git diff` y `.venv/bin/python -m pytest -q`. La interfaz es una capa delgada sobre un gestor ya
+   probado, así que la comprobamos a mano.
+4. **Guarda.** Marca la tarea 6 con `[x]` y haz commit:
+   ```bash
+   git add -A && git commit -m "Requisito 6: interfaz de texto"
+   ```
+
+> ¿Ya hiciste la interfaz de la ruta básica y después los requisitos 4 y 5? Pídele al agente que la amplíe con
+> las opciones eliminar y guardar, y actualiza antes `specs/spec.md`.
+
+##### Prueba manual 2 — guarda, cierra y vuelve a abrir
+
+Ejecuta el programa **en tu terminal** (no con `!`, porque el menú necesita que escribas):
 
 ```bash
-.venv/bin/python
+.venv/bin/python -m tareas
 ```
 
-Pega estas líneas (una por una, o todo el bloque):
+**Primera vez:**
 
-```python
-from pathlib import Path
-from tareas.gestor import GestorTareas, TareaNoEncontrada
-gestor = GestorTareas()
-gestor.agregar("Leer el capítulo 3", prioridad="alta")
-gestor.agregar("Hacer la práctica")
-gestor.agregar("Ver una serie", prioridad="baja")
-gestor.eliminar(3)
-nueva = gestor.agregar("Dormir temprano")
-nueva.id
-[(t.id, t.titulo) for t in gestor.listar()]
-gestor.eliminar(99)
-ruta = Path("mis_tareas.json")
-gestor.guardar(ruta)
-print(ruta.read_text(encoding="utf-8"))
-exit()
-```
-
-Qué debes ver:
-
-| Línea | Resultado esperado |
+| Haz esto en el menú | Debes ver |
 |---|---|
-| `nueva.id` | `4`. El id 3 se eliminó y **no se reutiliza**. |
-| `[(t.id, t.titulo) ...]` | `[(1, 'Leer el capítulo 3'), (2, 'Hacer la práctica'), (4, 'Dormir temprano')]`. Falta la tarea 3. |
-| `gestor.eliminar(99)` | Un error que termina en `TareaNoEncontrada`. |
-| `print(ruta.read_text(...))` | Tus tareas escritas como texto JSON (el formato exacto depende de tu código). |
+| Agrega `Leer el capítulo 3` (alta), `Hacer la práctica` (sin prioridad) y `Ver una serie` (baja) | Tres tareas con ids 1, 2 y 3 |
+| Elimina la tarea con id `3` | Un mensaje de que se eliminó; al ver las tareas ya no aparece |
+| Agrega `Dormir temprano` | Su id es **4**, no 3: los ids **no se reutilizan** |
+| Elimina la tarea con id `99` | Un mensaje de que no existe; el programa sigue abierto |
+| Elige guardar y luego `0` (salir) | El programa termina y aparece el archivo `tareas.json` en tu carpeta |
 
-Además, aparece un archivo nuevo `mis_tareas.json` en tu carpeta. Ábrelo y léelo. (Git lo ignora a propósito
-para que no se suba por accidente.)
-
-**Sesión B.** Vuelve a abrir Python (ya cerraste la anterior con `exit()`, así que **no queda nada en memoria**):
+Mira el archivo, para ver cómo quedaron guardadas tus tareas:
 
 ```bash
-.venv/bin/python
+cat tareas.json
 ```
 
-```python
-from pathlib import Path
-from tareas.gestor import GestorTareas
-gestor = GestorTareas.cargar(Path("mis_tareas.json"))
-[(t.id, t.titulo, t.prioridad, t.completada) for t in gestor.listar()]
-gestor.agregar("Otra más").id
-exit()
-```
+(Windows sin WSL: `type tareas.json`.) Git ignora los archivos `.json` a propósito, para que no se suban por
+accidente.
 
-Debes ver tus tres tareas, ordenadas por prioridad (alta primero), y el id de la nueva tarea debe ser `5`:
+**Segunda vez.** Vuelve a ejecutar `.venv/bin/python -m tareas`. Ya cerraste el programa, así que **no queda nada
+en memoria**:
 
-```text
-[(1, 'Leer el capítulo 3', 'alta', False), (2, 'Hacer la práctica', 'media', False), (4, 'Dormir temprano', 'media', False)]
-5
-```
+| Haz esto en el menú | Debes ver |
+|---|---|
+| Ve las tareas | Tus tres tareas (ids 1, 2 y 4), ordenadas con la prioridad alta primero |
+| Agrega `Otra más` | Su id es **5** |
+| Elige `0` y responde que **no** quieres guardar | El programa termina |
 
 **Limpia el archivo de prueba:**
 
 ```bash
-rm mis_tareas.json
+rm tareas.json
 ```
 
-(Windows sin WSL: `del mis_tareas.json`.)
+(Windows sin WSL: `del tareas.json`.)
 
-Si algo no coincide con lo esperado, **encontraste un error que las pruebas no atraparon**. Anótalo en
-`REFLEXION.md`: es justo el tipo de hallazgo que buscamos en este taller.
+Si algo no coincide, **encontraste un error que las pruebas no atraparon** (o una regla de la especificación que
+el agente no cumplió). Anótalo en `REFLEXION.md`.
 
 ## Paso 4 — Revisión final y reflexión (15 min)
 
