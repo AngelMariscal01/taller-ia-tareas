@@ -33,21 +33,26 @@ Convenciones:
 | 16:40 | Conocer el harness: `AGENTS.md` y la especificación | Parte 3, Paso 1 |
 | 16:50 | Cazar alucinaciones | Parte 3, Paso 2 |
 | 17:10 | Descanso | — |
-| 17:20 | Construir con pruebas: ruta básica o completa | Parte 3, Paso 3 |
+| 17:20 | Construir con pruebas: requisitos 1 al 5 y la interfaz de texto | Parte 3, Paso 3 |
 | 18:30 | Revisión final y reflexión | Parte 3, Paso 4 |
 | 18:45 | Dudas y cierre | — |
 
-### Elige tu ruta
+### Qué vas a construir
 
-| | Ruta básica | Ruta completa |
-|---|---|---|
-| **Para quién** | 1.er semestre, o si aún no has visto clases (POO) | 3.er semestre en adelante |
-| **Requisitos** | 1 a 3: agregar, listar, completar | 1 a 5: además eliminar, guardar y cargar |
-| **Pruebas** | Ya vienen escritas; tú las corres y revisas | La del requisito 1 viene escrita; las demás las escribes tú con ayuda del agente |
-| **Planeación** | Le pides al agente que te explique la especificación | Además, el agente propone un plan y tú lo corriges |
-| **Al terminar** | Pruebas en verde, commits y `REFLEXION.md` | Lo mismo, más `specs/plan.md` y un commit con pruebas en rojo |
+Todos siguen el mismo camino: primero un **plan**, luego seis requisitos, uno por uno. Los primeros vienen con
+la mano guiada y cada vez haces más por tu cuenta.
 
-Si terminas la ruta básica antes de tiempo, sigue con los requisitos 4 y 5 de la ruta completa.
+| # | Requisito | Pruebas | Qué haces tú |
+|---|---|---|---|
+| 1 | agregar una tarea | Ya vienen en `tests/` | Pides el código, corres las pruebas y revisas |
+| 2 | listar y filtrar | Ya vienen listas en `ruta-basica/` | Las copias, pides el código y revisas |
+| 3 | completar una tarea | Ya vienen listas en `ruta-basica/` | Las copias, pides el código y revisas |
+| 4 | eliminar una tarea | **Las escribes tú** con ayuda del agente | Pruebas en rojo, luego el código |
+| 5 | guardar y cargar en JSON | **Las escribes tú** con ayuda del agente | Pruebas en rojo, luego el código |
+| 6 | interfaz de texto | Se prueba **a mano** | Escribes la especificación, pides el código y lo usas |
+
+Si te quedas sin tiempo antes del requisito 5, no te preocupes: la interfaz del requisito 6 tiene una versión
+corta que funciona solo con los requisitos 1 a 3.
 
 ---
 
@@ -257,7 +262,7 @@ Qué trae el proyecto:
 | `specs/spec.md` | Qué debe hacer el programa. Lo que no está aquí no se construye. |
 | `specs/tasks.md` | La lista de tareas, una a la vez. |
 | `tests/test_agregar.py` | Pruebas del requisito 1. Hoy fallan: el código aún no existe. |
-| `ruta-basica/` | Pruebas listas de los requisitos 2 y 3 para la ruta básica. |
+| `ruta-basica/` | Pruebas ya escritas de los requisitos 2 y 3 (las copias a `tests/` cuando toque). |
 | `REFLEXION.md` | Lo que llenas al final. |
 
 ## 2.2 Entorno y librerías — a mano
@@ -380,12 +385,45 @@ Dame un ejemplo para leer un archivo JSON en Python.
 
 ## Paso 3 — Construir con pruebas (70 min)
 
-Elige tu ruta. Las dos siguen el mismo ciclo por cada requisito:
+Un solo camino para todos, en este orden: **planear**, construir los requisitos **1 a 5** y, como último
+requisito, una **interfaz de texto** (requisito 6) para probar a mano tu programa. Cada requisito sigue el mismo
+ciclo:
 
 > **Rojo** (las pruebas fallan) → **Verde** (el agente escribe lo mínimo para que pasen) → **Revisa** (tú
 > corres y lees el cambio) → **Guarda** (marcas la tarea y haces commit).
 
-### Ruta básica: requisitos 1 a 3
+| Parte | Qué haces | Tiempo sugerido |
+|---|---|---|
+| 3.0 | Planear con el agente | 10 min |
+| 3.1 | Requisitos 1 a 3 (las pruebas ya vienen escritas) | 25 min |
+| 3.2 | Requisitos 4 y 5 (las pruebas las escribes tú con ayuda del agente) | 20 min |
+| 3.3 | Requisito 6: interfaz de texto y prueba manual | 15 min |
+
+**No pasa nada si no terminas.** Lo importante es el método. Si te quedas sin tiempo en 3.2, salta a 3.3 y usa
+la versión corta de la interfaz; los requisitos 4 y 5 los puedes hacer después, en casa.
+
+### 3.0 Planea (SDD: desarrollo guiado por especificación)
+
+En **Plan** (cámbiate con `Tab`), pega:
+
+```text
+Lee @AGENTS.md y @specs/spec.md. Propón un plan técnico (módulos, firmas de funciones, estructuras de datos y manejo de errores). No escribas código. Si algo de la especificación es ambiguo, pregúntame antes.
+```
+
+Responde sus preguntas y revisa el plan con ojo crítico: ¿agrega algo que la especificación no pide? ¿olvida
+algún requisito? Cuando estés de acuerdo, cambia a **Build** y pega:
+
+```text
+Guarda el plan que acordamos en specs/plan.md. No escribas código ni toques otros archivos.
+```
+
+Haz commit:
+
+```bash
+git add -A && git commit -m "Plan técnico"
+```
+
+### 3.1 Requisitos 1 a 3 — las pruebas ya vienen escritas
 
 #### Requisito 1 — agregar
 
@@ -420,6 +458,9 @@ Elige tu ruta. Las dos siguen el mismo ciclo por cada requisito:
    .venv/bin/python -m pytest -q
    ```
    (Windows sin WSL: `copy ruta-basica\test_listar.py tests\`.)
+
+   > ¿Ya sabes pytest? **Reto:** en lugar de copiarlas, escríbelas tú o pídeselas al agente como en el
+   > requisito 4 (3.2).
 2. **Verde.** En **Build**:
    ```text
    Implementa lo mínimo en tareas/gestor.py para que pasen las pruebas de tests/test_listar.py (requisito 2 de specs/spec.md) sin romper las de tests/test_agregar.py. No modifiques nada en tests/. Ejecuta .venv/bin/python -m pytest -q y muéstrame la salida real.
@@ -448,16 +489,100 @@ Elige tu ruta. Las dos siguen el mismo ciclo por cada requisito:
    git add -A && git commit -m "Requisito 3: completar"
    ```
 
-#### Requisito 6 — una interfaz de texto para usar tu programa
+### 3.2 Requisitos 4 y 5 — las pruebas las escribes tú
 
-Tus pruebas dicen "verde", pero un módulo no se puede *usar*. Vas a pedirle al agente una **interfaz de texto**:
-un menú en la terminal para agregar, ver y completar tareas, y así comprobar a mano cómo funciona lo que
+Aquí das un paso más: **tú escribes las pruebas** (o se las pides al agente y las revisas). Escribirlas es tu
+práctica: una prueba en rojo es la forma de decirle al agente exactamente qué quieres.
+
+#### Requisito 4 — eliminar
+
+1. **Rojo.** Pídele las pruebas al agente en **Build**:
+   ```text
+   Escribe SOLO las pruebas del requisito 4 de @specs/spec.md en tests/test_eliminar.py. No implementes nada ni toques tareas/. Cubre únicamente lo que dice la especificación.
+   ```
+   **Léelas y ajústalas.** Pistas de lo que deben comprobar: se borra la tarea; **los ids no se reutilizan**
+   (agrega, elimina y agrega otra: el id nuevo no repite el anterior); un id que no existe lanza
+   `TareaNoEncontrada`.
+
+   Comprueba que fallen y **haz commit en rojo**:
+   ```bash
+   .venv/bin/python -m pytest -q
+   git add -A && git commit -m "Pruebas en rojo: eliminar"
+   ```
+2. **Verde.** En **Build**:
+   ```text
+   Implementa lo mínimo en tareas/gestor.py para que pasen las pruebas de tests/test_eliminar.py (requisito 4 de specs/spec.md) sin romper las pruebas anteriores. No modifiques nada en tests/. Ejecuta .venv/bin/python -m pytest -q y muéstrame la salida real.
+   ```
+3. **Revisa** con estos comandos:
+   ```bash
+   git diff                                  # ¿entiendes cada línea?
+   git diff --stat HEAD -- tests/            # debe salir vacío: el agente no tocó las pruebas
+   .venv/bin/python -m pytest -q             # comprueba tú mismo que están en verde
+   ```
+4. **Guarda.** Marca la tarea 4 con `[x]` y haz commit:
+   ```bash
+   git add -A && git commit -m "Requisito 4: eliminar"
+   ```
+
+#### Requisito 5 — guardar y cargar
+
+1. **Rojo.** En **Build**:
+   ```text
+   Escribe SOLO las pruebas del requisito 5 de @specs/spec.md en tests/test_persistencia.py. Usa la carpeta temporal de pytest (tmp_path) para no crear archivos en el proyecto. No implementes nada ni toques tareas/.
+   ```
+   **Léelas y ajústalas.** Si quieres comparar, esta es una prueba mínima:
+
+   ```python
+   from tareas.gestor import GestorTareas
+
+
+   def test_guardar_y_cargar_conserva_las_tareas(tmp_path):
+       ruta = tmp_path / "tareas.json"
+       gestor = GestorTareas()
+       gestor.agregar("Leer el capítulo 3", prioridad="alta")
+       gestor.guardar(ruta)
+       copia = GestorTareas.cargar(ruta)
+       assert [t.titulo for t in copia.listar()] == ["Leer el capítulo 3"]
+   ```
+
+   Comprueba que fallen y haz commit en rojo:
+   ```bash
+   .venv/bin/python -m pytest -q
+   git add -A && git commit -m "Pruebas en rojo: guardar y cargar"
+   ```
+2. **Verde.** En **Build**:
+   ```text
+   Implementa lo mínimo en tareas/gestor.py para que pasen las pruebas de tests/test_persistencia.py (requisito 5 de specs/spec.md) sin romper las pruebas anteriores. guardar y cargar deben aceptar una ruta de tipo Path. No modifiques nada en tests/. Ejecuta .venv/bin/python -m pytest -q y muéstrame la salida real.
+   ```
+3. **Revisa:** `git diff`, `git diff --stat HEAD -- tests/` (debe salir vacío) y `.venv/bin/python -m pytest -q`.
+4. **Guarda.** Marca la tarea 5 con `[x]` y haz commit:
+   ```bash
+   git add -A && git commit -m "Requisito 5: guardar y cargar"
+   ```
+
+**Refactor (opcional).** Cuando todo esté en verde, pide mejoras de legibilidad, revisa el diff y haz commit:
+
+```text
+Mejora nombres y elimina duplicación en tareas/gestor.py sin cambiar el comportamiento. No modifiques tests/. Las pruebas deben seguir en verde: ejecuta .venv/bin/python -m pytest -q y muéstrame la salida real.
+```
+
+### 3.3 Requisito 6 — una interfaz de texto para probar tu programa
+
+Tus pruebas dicen "verde", pero un módulo no se puede *usar*. Como último requisito vas a pedirle al agente una
+**interfaz de texto**: un menú en la terminal que usa tu gestor, para comprobar a mano cómo funciona lo que
 construiste. La llamamos requisito 6 porque en `specs/spec.md` los números 4 y 5 son eliminar y guardar.
 
 Como el método dice que **lo que no está en la especificación no se construye**, primero se escribe en la
 especificación y después se pide el código.
 
-1. **Especificación.** Cambia a **Build** con `Tab` y pega:
+1. **Especificación.** En **Build**, pega el prompt que corresponda:
+
+   **Si hiciste los requisitos 1 a 5:**
+   ```text
+   Agrega a specs/spec.md un requisito 6 y a specs/tasks.md la tarea 6, sin tocar nada más. Requisito 6, interfaz de texto: al ejecutar python -m tareas (archivo tareas/__main__.py) se muestra un menú que se repite hasta que la persona elija salir, con estas opciones: 1) agregar una tarea (pide el título y la prioridad; si la prioridad se deja vacía usa "media"), 2) ver las tareas (muestra id, título, prioridad y si está completada, en el orden de listar), 3) completar una tarea (pide el id), 4) eliminar una tarea (pide el id), 5) guardar en el archivo tareas.json, 0) salir (antes de salir pregunta si desea guardar). Al iniciar, si existe tareas.json en la carpeta actual, lo carga con GestorTareas.cargar. Si la persona escribe una opción inválida, un dato inválido o un id que no existe, muestra un mensaje claro en español y vuelve al menú, sin cerrar el programa ni mostrar un traceback. Usa solo la biblioteca estándar (input y print) y la clase GestorTareas, sin cambiar su comportamiento.
+   ```
+
+   **Versión corta, si solo llegaste al requisito 3:**
    ```text
    Agrega a specs/spec.md un requisito 6 y a specs/tasks.md la tarea 6, sin tocar nada más. Requisito 6, interfaz de texto: al ejecutar python -m tareas (archivo tareas/__main__.py) se muestra un menú que se repite hasta que la persona elija salir, con estas opciones: 1) agregar una tarea (pide el título y la prioridad; si la prioridad se deja vacía usa "media"), 2) ver las tareas (muestra id, título, prioridad y si está completada, en el orden de listar), 3) completar una tarea (pide el id), 0) salir. Si la persona escribe una opción inválida, un dato inválido o un id que no existe, muestra un mensaje claro en español y vuelve al menú, sin cerrar el programa ni mostrar un traceback. Usa solo la biblioteca estándar (input y print) y la clase GestorTareas, sin cambiar su comportamiento.
    ```
@@ -467,13 +592,13 @@ especificación y después se pide el código.
    Implementa el requisito 6 de specs/spec.md en tareas/__main__.py. Usa solo GestorTareas: no cambies tareas/gestor.py ni nada en tests/. No ejecutes el programa tú (espera datos del teclado y se quedaría esperando): explícame cómo ejecutarlo y qué probar. Al terminar, ejecuta .venv/bin/python -m pytest -q y muéstrame la salida real para confirmar que todo sigue en verde.
    ```
 3. **Revisa:** `git diff` y `.venv/bin/python -m pytest -q`. Esta capa es delgada (solo usa el gestor, cuya
-   lógica ya está probada), así que la comprobamos a mano.
+   lógica ya está probada), así que la comprobamos a mano, en la prueba de abajo.
 4. **Guarda.** Marca la tarea 6 con `[x]` y haz commit:
    ```bash
    git add -A && git commit -m "Requisito 6: interfaz de texto"
    ```
 
-##### Prueba manual 1 — ¡usa tu programa!
+#### Prueba manual — ¡usa tu programa!
 
 Ejecútalo **en tu terminal** (no con `!` dentro de OpenCode, porque el menú necesita que escribas):
 
@@ -484,152 +609,32 @@ Ejecútalo **en tu terminal** (no con `!` dentro de OpenCode, porque el menú ne
 (Windows sin WSL: `.venv\Scripts\python -m tareas`.) Tu menú puede verse distinto al de tu compañero: lo
 importante es que **haga esto**.
 
+**Bloque A — requisitos 1 a 3 (todos):**
+
 | Haz esto en el menú | Debes ver |
 |---|---|
-| Agrega `Entregar la práctica`, prioridad `alta` | Un mensaje de que se agregó |
-| Agrega `Lavar los trastes`, prioridad `baja` | Un mensaje de que se agregó |
-| Agrega `Estudiar para el examen` y deja la prioridad vacía (Enter) | Se agrega con prioridad `media` |
+| Agrega `Entregar la práctica`, prioridad `alta` | Un mensaje de que se agregó (id 1) |
+| Agrega `Lavar los trastes`, prioridad `baja` | Un mensaje de que se agregó (id 2) |
+| Agrega `Estudiar para el examen` y deja la prioridad vacía (Enter) | Se agrega con prioridad `media` (id 3) |
 | Completa la tarea con id `1` | Un mensaje de que se completó |
 | Ve las tareas | Orden: **alta** (`Entregar la práctica`, marcada como completada), **media** (`Estudiar...`), **baja** (`Lavar...`) |
 | Agrega una tarea con el título vacío | Un mensaje de error; el programa **sigue abierto** |
 | Agrega `Algo` con prioridad `urgente` | Un mensaje de error; el programa sigue abierto |
 | Completa la tarea con id `99` | Un mensaje de que no existe; el programa sigue abierto |
 | Escribe `hola` en el menú | Un mensaje de opción inválida; el programa sigue abierto |
-| Elige `0` | El programa termina |
 
-Si algo no coincide, **encontraste un error que las pruebas no atraparon** (o una regla de la especificación que
-el agente no cumplió). Anótalo en `REFLEXION.md`.
-
-¿Terminaste antes de tiempo? Sigue con los requisitos 4 y 5 de la ruta completa (abajo): ahí escribes tú las
-pruebas.
-
-### Ruta completa: requisitos 1 a 5
-
-#### Planea (SDD: desarrollo guiado por especificación)
-
-En **Plan**, pega:
-
-```text
-Lee @AGENTS.md y @specs/spec.md. Propón un plan técnico (módulos, firmas de funciones, estructuras de datos y manejo de errores). No escribas código. Si algo de la especificación es ambiguo, pregúntame antes.
-```
-
-Responde sus preguntas y revisa el plan con ojo crítico: ¿agrega algo que la especificación no pide? ¿olvida
-algún requisito? Cuando estés de acuerdo, cambia a **Build** y pega:
-
-```text
-Guarda el plan que acordamos en specs/plan.md. No escribas código ni toques otros archivos.
-```
-
-Haz commit:
-
-```bash
-git add -A && git commit -m "Plan técnico"
-```
-
-#### Requisito 1 — agregar
-
-Sus pruebas ya están en `tests/test_agregar.py`. Haz los pasos **Verde**, **Revisa** y **Guarda** del
-requisito 1 de la ruta básica.
-
-#### Requisitos 2 a 5 — las pruebas las escribes tú
-
-**No copies** las de `ruta-basica/`: escribirlas es tu práctica. Para cada requisito:
-
-1. **Rojo.** Escribe las pruebas tú, o pídeselas al agente en **Build** (sustituye el requisito y el archivo
-   por el que corresponda):
-   ```text
-   Escribe SOLO las pruebas del requisito 2 de @specs/spec.md en tests/test_listar.py. No implementes nada ni toques tareas/. Cubre únicamente lo que dice la especificación.
-   ```
-   Archivos por requisito: `tests/test_listar.py` (2), `tests/test_completar.py` (3), `tests/test_eliminar.py` (4),
-   `tests/test_persistencia.py` (5).
-
-   **Léelas y ajústalas**, comprueba que fallen y haz commit en rojo:
-   ```bash
-   .venv/bin/python -m pytest -q
-   git add -A && git commit -m "Pruebas en rojo: listar"
-   ```
-2. **Verde.** En **Build** (sustituye el requisito y el archivo):
-   ```text
-   Implementa lo mínimo en tareas/gestor.py para que pasen las pruebas de tests/test_listar.py (requisito 2 de specs/spec.md) sin romper las pruebas anteriores. No modifiques nada en tests/. Ejecuta .venv/bin/python -m pytest -q y muéstrame la salida real.
-   ```
-3. **Revisa** con estos comandos:
-   ```bash
-   git diff                                  # ¿entiendes cada línea?
-   git diff --stat HEAD -- tests/            # debe salir vacío: el agente no tocó las pruebas
-   .venv/bin/python -m pytest -q                       # comprueba tú mismo que están en verde
-   ```
-4. **Refactor.** Pide mejoras de legibilidad, revisa el diff y haz commit:
-   ```text
-   Mejora nombres y elimina duplicación en tareas/gestor.py sin cambiar el comportamiento. No modifiques tests/. Las pruebas deben seguir en verde: ejecuta .venv/bin/python -m pytest -q y muéstrame la salida real.
-   ```
-   ```bash
-   git add -A && git commit -m "Requisito 2: listar"
-   ```
-
-Marca cada tarea con `[x]` en `specs/tasks.md` al terminar. Cuando termines el requisito 5, sigue con el
-**requisito 6 (interfaz de texto)** y la **Prueba manual 2**, más abajo.
-
-**Pistas para tus pruebas:**
-
-- **Requisito 4 (eliminar):** borra una tarea; los ids no se reutilizan (agrega, elimina y agrega otra: el id
-  nuevo no repite el anterior); un id que no existe lanza `TareaNoEncontrada`.
-- **Requisito 5 (guardar y cargar):** usa la carpeta temporal de pytest (`tmp_path`) para no ensuciar tu
-  proyecto. Un ejemplo:
-
-  ```python
-  from tareas.gestor import GestorTareas
-
-
-  def test_guardar_y_cargar_conserva_las_tareas(tmp_path):
-      ruta = tmp_path / "tareas.json"
-      gestor = GestorTareas()
-      gestor.agregar("Leer el capítulo 3", prioridad="alta")
-      gestor.guardar(ruta)
-      copia = GestorTareas.cargar(ruta)
-      assert [t.titulo for t in copia.listar()] == ["Leer el capítulo 3"]
-  ```
-
-#### Requisito 6 — una interfaz de texto para usar tu programa
-
-Con los 5 requisitos hechos, vas a pedirle al agente una **interfaz de texto**: un menú en la terminal que usa
-tu gestor, para comprobar a mano que todo funciona, incluido guardar y recuperar. Primero se escribe en la
-especificación (lo que no está ahí no se construye) y después el código.
-
-1. **Especificación.** En **Build**:
-   ```text
-   Agrega a specs/spec.md un requisito 6 y a specs/tasks.md la tarea 6, sin tocar nada más. Requisito 6, interfaz de texto: al ejecutar python -m tareas (archivo tareas/__main__.py) se muestra un menú que se repite hasta que la persona elija salir, con estas opciones: 1) agregar una tarea (pide el título y la prioridad; si la prioridad se deja vacía usa "media"), 2) ver las tareas (muestra id, título, prioridad y si está completada, en el orden de listar), 3) completar una tarea (pide el id), 4) eliminar una tarea (pide el id), 5) guardar en el archivo tareas.json, 0) salir (antes de salir pregunta si desea guardar). Al iniciar, si existe tareas.json en la carpeta actual, lo carga con GestorTareas.cargar. Si la persona escribe una opción inválida, un dato inválido o un id que no existe, muestra un mensaje claro en español y vuelve al menú, sin cerrar el programa ni mostrar un traceback. Usa solo la biblioteca estándar (input y print) y la clase GestorTareas, sin cambiar su comportamiento.
-   ```
-   Lee lo que escribió en `specs/spec.md`: ¿agregó algo que no pediste?
-2. **Código.** En **Build**:
-   ```text
-   Implementa el requisito 6 de specs/spec.md en tareas/__main__.py. Usa solo GestorTareas: no cambies tareas/gestor.py ni nada en tests/. No ejecutes el programa tú (espera datos del teclado y se quedaría esperando): explícame cómo ejecutarlo y qué probar. Al terminar, ejecuta .venv/bin/python -m pytest -q y muéstrame la salida real para confirmar que todo sigue en verde.
-   ```
-3. **Revisa:** `git diff` y `.venv/bin/python -m pytest -q`. La interfaz es una capa delgada sobre un gestor ya
-   probado, así que la comprobamos a mano.
-4. **Guarda.** Marca la tarea 6 con `[x]` y haz commit:
-   ```bash
-   git add -A && git commit -m "Requisito 6: interfaz de texto"
-   ```
-
-> ¿Ya hiciste la interfaz de la ruta básica y después los requisitos 4 y 5? Pídele al agente que la amplíe con
-> las opciones eliminar y guardar, y actualiza antes `specs/spec.md`.
-
-##### Prueba manual 2 — guarda, cierra y vuelve a abrir
-
-Ejecuta el programa **en tu terminal** (no con `!`, porque el menú necesita que escribas):
-
-```bash
-.venv/bin/python -m tareas
-```
-
-**Primera vez:**
+**Bloque B — requisito 4, eliminar (si lo hiciste):**
 
 | Haz esto en el menú | Debes ver |
 |---|---|
-| Agrega `Leer el capítulo 3` (alta), `Hacer la práctica` (sin prioridad) y `Ver una serie` (baja) | Tres tareas con ids 1, 2 y 3 |
-| Elimina la tarea con id `3` | Un mensaje de que se eliminó; al ver las tareas ya no aparece |
-| Agrega `Dormir temprano` | Su id es **4**, no 3: los ids **no se reutilizan** |
+| Elimina la tarea con id `2` | Un mensaje de que se eliminó; al ver las tareas ya no aparece `Lavar los trastes` |
+| Agrega `Dormir temprano` | Su id es **4**: los ids **no se reutilizan** (ni el 2 ni el 3) |
 | Elimina la tarea con id `99` | Un mensaje de que no existe; el programa sigue abierto |
+
+**Bloque C — requisito 5, guardar y cargar (si lo hiciste):**
+
+| Haz esto en el menú | Debes ver |
+|---|---|
 | Elige guardar y luego `0` (salir) | El programa termina y aparece el archivo `tareas.json` en tu carpeta |
 
 Mira el archivo, para ver cómo quedaron guardadas tus tareas:
@@ -641,12 +646,12 @@ cat tareas.json
 (Windows sin WSL: `type tareas.json`.) Git ignora los archivos `.json` a propósito, para que no se suban por
 accidente.
 
-**Segunda vez.** Vuelve a ejecutar `.venv/bin/python -m tareas`. Ya cerraste el programa, así que **no queda nada
-en memoria**:
+Ahora vuelve a ejecutar `.venv/bin/python -m tareas`. Ya cerraste el programa, así que **no queda nada en
+memoria**:
 
 | Haz esto en el menú | Debes ver |
 |---|---|
-| Ve las tareas | Tus tres tareas (ids 1, 2 y 4), ordenadas con la prioridad alta primero |
+| Ve las tareas | Tus tres tareas (ids 1, 3 y 4): `Entregar la práctica` **sigue completada** y la prioridad alta va primero |
 | Agrega `Otra más` | Su id es **5** |
 | Elige `0` y responde que **no** quieres guardar | El programa termina |
 
@@ -666,10 +671,11 @@ el agente no cumplió). Anótalo en `REFLEXION.md`.
 Verifica cada punto tú mismo:
 
 - [ ] `.venv/bin/python -m pytest -q` en verde, **ejecutado por ti**.
-- [ ] Hiciste la(s) prueba(s) manual(es) y viste funcionar tu programa.
+- [ ] Hiciste la prueba manual y viste funcionar tu programa con la interfaz.
 - [ ] `git diff --stat` revisado; ningún cambio que no entiendas.
 - [ ] `specs/tasks.md` con tus tareas marcadas.
-- [ ] `git log --oneline` muestra commits pequeños (ruta completa: incluido uno con pruebas en rojo).
+- [ ] `git log --oneline` muestra commits pequeños (si hiciste los requisitos 4 y 5: incluidos los de pruebas
+  en rojo).
 - [ ] Revisaste el historial de la sesión: ¿el agente dijo alguna vez que las pruebas pasaban sin haberlas
   ejecutado?
 - [ ] `REFLEXION.md` completo.
